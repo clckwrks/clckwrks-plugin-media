@@ -45,7 +45,7 @@ uploadMedium here =
 
     where
       saveMedium :: (String, FilePath, ContentType) -> MediaM Response
-      saveMedium (origName, tempPath, contentType) =
+      saveMedium (tempPath, origName, contentType) =
           do md    <- mediaDirectory <$> ask
              magic <- mediaMagic <$> ask
              contentType <- liftIO $ magicFile magic tempPath
