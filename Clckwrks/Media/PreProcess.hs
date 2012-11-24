@@ -5,8 +5,10 @@ import Control.Applicative
 import Clckwrks (ClckT, ClckState)
 import Clckwrks.Media.URL
 import Clckwrks.Media.Types (MediumId(..))
-import Data.Attoparsec.Text
+import Clckwrks.Monad                   (transform, segments)
+import Data.Attoparsec.Text.Lazy        (Parser, Result(..), char, choice, decimal, parse, skipMany, space, stringCI, skipMany)
 import           Data.Text (Text)
+import qualified Data.Text.Lazy         as TL
 import           Data.Text.Lazy.Builder (Builder)
 import qualified Data.Text.Lazy.Builder as B
 import           Text.Blaze.Html ((!), toValue)
@@ -36,12 +38,17 @@ parseCmd =
     (,) <$> (parseAttr "id" *> (MediumId <$> decimal))
         <*> (many $ choice [ width, height ])
 
-mediaCmd :: (Monad m) => (MediaURL -> [(Text, Maybe Text)] -> Text) -> Text -> ClckT url m Builder
-mediaCmd showURLFn txt =
-    do let mi = parseOnly parseCmd txt
-       case mi of
-         (Left e) ->
-               return $ B.fromString e -- FIXME: format the error more nicely or something?
-         (Right (mid, attrs)) ->
-             do let u = toValue $ showURLFn (GetMedium mid) []
-                return $ B.fromLazyText $ renderHtml $ foldr (\attr tag -> tag ! attr) H.img (A.src u : attrs)
+mediaCmd :: (Monad m) =>
+            (MediaURL -> [(Text, Maybe Text)] -> Text)
+         -> TL.Text
+         -> ClckT url m TL.Text
+mediaCmd mediaShowURL txt =
+    case parse (segments "media" parseCmd) txt of
+      (Fail _ _ e) -> return (TL.pack e)
+      (Done _ segments) ->
+          do b <- transform (applyCmd mediaShowURL) segments
+             return $ B.toLazyText b
+
+applyCmd mediaShowURL (mid, attrs) =
+    do let u = toValue $ mediaShowURL (GetMedium mid) []
+       return $ B.fromLazyText $ renderHtml $ foldr (\attr tag -> tag ! attr) H.img (A.src u : attrs)

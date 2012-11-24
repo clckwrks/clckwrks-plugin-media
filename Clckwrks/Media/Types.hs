@@ -7,7 +7,7 @@ import Data.SafeCopy (SafeCopy, base, deriveSafeCopy)
 import Data.Text     (Text)
 import Web.Routes    (PathInfo(..))
 
-newtype MediumId = MediumId { unMediumId :: Integer } 
+newtype MediumId = MediumId { unMediumId :: Integer }
     deriving (Eq, Ord, Read, Show, Data, Typeable, SafeCopy, PathInfo)
 
 data MediumKind
