@@ -20,7 +20,7 @@ import Data.Set                  (Set)
 import Magic                     (Magic, MagicFlag(..), magicLoadDefault, magicOpen)
 import System.Directory          (createDirectoryIfMissing)
 import System.FilePath           ((</>))
-import Web.Plugin.Core           (Plugin(..), Plugins(..), When(..), addCleanup, addHandler, initPlugin, getConfig, getPluginRouteFn)
+import Web.Plugins.Core          (Plugin(..), Plugins(..), When(..), addCleanup, addHandler, initPlugin, getConfig, getPluginRouteFn)
 import Paths_clckwrks_plugin_media (getDataDir)
 
 mediaHandler :: (MediaURL -> [(Text, Maybe Text)] -> Text)
