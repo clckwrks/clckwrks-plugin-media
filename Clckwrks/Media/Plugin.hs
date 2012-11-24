@@ -21,7 +21,6 @@ import Magic                     (Magic, MagicFlag(..), magicLoadDefault, magicO
 import System.Directory          (createDirectoryIfMissing)
 import System.FilePath           ((</>))
 import Web.Plugins.Core          (Plugin(..), Plugins(..), When(..), addCleanup, addHandler, initPlugin, getConfig, getPluginRouteFn)
-import Paths_clckwrks_plugin_media (getDataDir)
 
 mediaHandler :: (MediaURL -> [(Text, Maybe Text)] -> Text)
               -> MediaConfig
@@ -74,9 +73,7 @@ mediaPlugin = Plugin
     , pluginInit       = mediaInit
     , pluginDepends    = []
     , pluginToPathInfo = toPathInfo
-    , pluginPostHook   =
-         do dd <- liftIO getDataDir
-            addPluginPath (pluginName mediaPlugin) dd
+    , pluginPostHook   = return ()
     }
 
 plugin :: ClckPlugins -- ^ plugins

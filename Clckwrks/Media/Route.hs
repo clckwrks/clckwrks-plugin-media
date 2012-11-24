@@ -12,6 +12,7 @@ import Clckwrks.Media.Page.Upload    (uploadMedium)
 import qualified Data.Set            as Set
 import Happstack.Server              (Response)
 import Magic
+-- import Paths_clckwrks_plugin_media (getDataDir)
 
 checkAuth :: MediaURL -> MediaM MediaURL
 checkAuth url =
@@ -28,5 +29,5 @@ routeMedia unsecureURL =
        case url of
          (MediaAdmin Upload)   -> uploadMedium url
          (MediaAdmin AllMedia) -> allMedia
-         (GetMedium mid) -> getMedium mid
-         (Preview mid)   -> previewMedium mid
+         (GetMedium mid)       -> getMedium mid
+         (Preview mid)         -> previewMedium mid
