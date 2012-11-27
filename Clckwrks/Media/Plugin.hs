@@ -9,8 +9,9 @@ import Clckwrks.Media.Monad      (MediaConfig(..), runMediaT)
 import Clckwrks.Media.PreProcess (mediaCmd)
 import Clckwrks.Media.Preview    (applyTransforms)
 import Clckwrks.Media.Route      (routeMedia)
-import Clckwrks.Media.URL        (MediaURL(..))
+import Clckwrks.Media.URL        (MediaURL(..), MediaAdminURL(..))
 import Control.Concurrent        (ThreadId, killThread)
+import Control.Monad.State       (get)
 import Data.Acid                 as Acid
 import Data.Acid.Local           (createCheckpointAndClose, openLocalStateFrom)
 import Data.Text                 (Text)
@@ -65,7 +66,18 @@ mediaInit plugins =
 
        addPreProc plugins (mediaCmd mediaShowFn)
        addHandler plugins (pluginName mediaPlugin) (mediaHandler mediaShowFn mediaConfig)
+
        return Nothing
+
+addMediaAdminMenu :: ClckT url IO ()
+addMediaAdminMenu =
+    do p <- plugins <$> get
+       (Just mediaShowURL) <- getPluginRouteFn p (pluginName mediaPlugin)
+       let uploadURL   = mediaShowURL (MediaAdmin Upload) []
+           allMediaURL = mediaShowURL (MediaAdmin AllMedia) []
+       addAdminMenu ("Media Gallery", [("Upload",    uploadURL)
+                                      ,("All Media", allMediaURL)
+                                      ])
 
 mediaPlugin :: Plugin MediaURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig [TL.Text -> ClckT ClckURL IO TL.Text]
 mediaPlugin = Plugin
@@ -73,7 +85,7 @@ mediaPlugin = Plugin
     , pluginInit       = mediaInit
     , pluginDepends    = []
     , pluginToPathInfo = toPathInfo
-    , pluginPostHook   = return ()
+    , pluginPostHook   = addMediaAdminMenu
     }
 
 plugin :: ClckPlugins -- ^ plugins
@@ -81,3 +93,4 @@ plugin :: ClckPlugins -- ^ plugins
        -> IO (Maybe Text)
 plugin plugins baseURI =
     initPlugin plugins baseURI mediaPlugin
+

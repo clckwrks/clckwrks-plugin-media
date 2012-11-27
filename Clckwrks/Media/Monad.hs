@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses, TypeFamilies, TypeSynonymInstances, OverloadedStrings #-}
 module Clckwrks.Media.Monad where
 
-import Clckwrks            (ClckT(..), ClckFormT, ClckState(..), ClckURL(..), mapClckT, addAdminMenu)
+import Clckwrks            (ClckT(..), ClckFormT, ClckState(..), ClckURL(..), mapClckT)
 import Clckwrks.Acid
 import Clckwrks.IOThread   (IOThread(..), startIOThread, killIOThread)
 import Clckwrks.Media.Acid
@@ -88,32 +88,3 @@ withMediaConfig mBasePath mediaDir f =
                              , mediaIOThread  = ioThread
                              , mediaClckURL   = undefined
                              })
-
-{-
-initMediaConfig :: Maybe FilePath -> FilePath -> IO (IO MediaConfig, MediaConfig -> IO ())
-initMediaConfig mBasePath mediaDir =
-    return (create, destroy)
-    where
-    do let basePath = fromMaybe "_state" mBasePath
-           cacheDir  = mediaDir </> "_cache"
-       createDirectoryIfMissing True cacheDir
-       bracket (openLocalStateFrom (basePath </> "media") initialMediaState) (createCheckpointAndClose) $ \media ->
-         bracket (startIOThread (applyTransforms mediaDir cacheDir)) killIOThread $ \ioThread ->
-           do magic <- magicOpen [MagicMime, MagicError]
-              magicLoadDefault magic
-              f (MediaConfig { mediaDirectory = mediaDir
-                             , mediaState     = media
-                             , mediaMagic     = magic
-                             , mediaIOThread  = ioThread
-                             , mediaClckURL   = undefined
-                             })
-
--}
-addMediaAdminMenu :: ClckT MediaURL IO ()
-addMediaAdminMenu =
-    do uploadURL   <- showURL (MediaAdmin Upload)
-       allMediaURL <- showURL (MediaAdmin AllMedia)
-       addAdminMenu ("Media Gallery", [("Upload",    uploadURL)
-                                      ,("All Media", allMediaURL)
-                                      ])
-
