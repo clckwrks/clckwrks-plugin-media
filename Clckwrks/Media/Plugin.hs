@@ -10,6 +10,7 @@ import Clckwrks.Media.PreProcess (mediaCmd)
 import Clckwrks.Media.Preview    (applyTransforms)
 import Clckwrks.Media.Route      (routeMedia)
 import Clckwrks.Media.URL        (MediaURL(..), MediaAdminURL(..))
+import Clckwrks.Monad            (ClckPluginsSt)
 import Control.Concurrent        (ThreadId, killThread)
 import Control.Monad.State       (get)
 import Data.Acid                 as Acid
@@ -18,6 +19,7 @@ import Data.Text                 (Text)
 import qualified Data.Text.Lazy  as TL
 import Data.Maybe                (fromMaybe)
 import Data.Set                  (Set)
+import qualified Data.Set        as Set
 import Magic                     (Magic, MagicFlag(..), magicLoadDefault, magicOpen)
 import System.Directory          (createDirectoryIfMissing)
 import System.FilePath           ((</>))
@@ -75,11 +77,11 @@ addMediaAdminMenu =
        (Just mediaShowURL) <- getPluginRouteFn p (pluginName mediaPlugin)
        let uploadURL   = mediaShowURL (MediaAdmin Upload) []
            allMediaURL = mediaShowURL (MediaAdmin AllMedia) []
-       addAdminMenu ("Media Gallery", [("Upload",    uploadURL)
-                                      ,("All Media", allMediaURL)
+       addAdminMenu ("Media Gallery", [(Set.fromList [Administrator], "Upload",    uploadURL)
+                                      ,(Set.fromList [Administrator], "All Media", allMediaURL)
                                       ])
 
-mediaPlugin :: Plugin MediaURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig [TL.Text -> ClckT ClckURL IO TL.Text]
+mediaPlugin :: Plugin MediaURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig ClckPluginsSt
 mediaPlugin = Plugin
     { pluginName       = "media"
     , pluginInit       = mediaInit
