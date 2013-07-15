@@ -1,5 +1,5 @@
-{-# LANGUAGE TypeFamilies #-}
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# LANGUAGE TypeFamilies, OverloadedStrings #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Clckwrks.Media.Page.Upload where
 
 import Control.Applicative  ((<$>), (<*))
@@ -14,12 +14,14 @@ import Clckwrks.Media.URL   (MediaURL(..))
 import           Data.Map   (Map)
 import qualified Data.Map   as Map
 import Data.Text            (pack)
+import Data.Text.Lazy       (Text)
 import Happstack.Server     (ContentType, Input, Response, ServerPartT, ok, setResponseCode, toResponse)
-import HSP
+import HSP.XML              (fromStringLit)
+import HSP.XMLGenerator
 import Magic                (magicFile)
 import Text.Reform          ((++>), FormError(..))
 import Text.Reform.Happstack (reform)
-import Text.Reform.HSP.Text (inputFile, label, inputSubmit, textarea, fieldset, ol, li, form)
+import Text.Reform.HSP.Text (inputFile, labelText, inputSubmit, textarea, fieldset, ol, li, form)
 import System.Directory (copyFile)
 import System.FilePath  ((</>), addExtension, takeExtension)
 import Web.Routes (showURL)
@@ -73,4 +75,4 @@ uploadMedium here =
 
 uploadForm :: MediaForm (FilePath, FilePath, ContentType)
 uploadForm =
-    label "upload file: " ++> inputFile <* inputSubmit (pack "Upload")
+    labelText "upload file: " ++> inputFile <* inputSubmit (pack "Upload")

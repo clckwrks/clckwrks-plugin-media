@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses, TypeFamilies, TypeSynonymInstances, OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts, FlexibleInstances, MultiParamTypeClasses, TypeFamilies, TypeSynonymInstances, OverloadedStrings #-}
 module Clckwrks.Media.Monad where
 
 import Clckwrks            (ClckT(..), ClckFormT, ClckState(..), ClckURL(..), mapClckT)
@@ -17,9 +17,11 @@ import Data.Acid.Local     (createCheckpointAndClose, openLocalStateFrom)
 import qualified Data.Map  as Map
 import Data.Maybe          (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
 import Happstack.Server
 import Happstack.Server.Internal.Monads (FilterFun)
-import HSP                  (Attr((:=)), Attribute(MkAttr), EmbedAsAttr(..), EmbedAsChild(..), IsName(toName), pAttrVal)
+import HSP.XML              (Attribute(MkAttr), XML(..), pAttrVal)
+import HSP.XMLGenerator     (Attr((:=)), EmbedAsAttr(..), EmbedAsChild(..), IsName(toName))
 import Magic                (Magic, MagicFlag(..), magicLoadDefault, magicOpen)
 import System.Directory     (createDirectoryIfMissing)
 import System.FilePath      ((</>))
@@ -50,15 +52,15 @@ instance (Functor m, Monad m) => EmbedAsChild (MediaT m) MediaFormError where
 
 type MediaForm = ClckFormT MediaFormError MediaM
 
-instance (IsName n) => EmbedAsAttr MediaM (Attr n MediaURL) where
+instance (IsName n TL.Text) => EmbedAsAttr MediaM (Attr n MediaURL) where
         asAttr (n := u) =
             do url <- showURL u
-               asAttr $ MkAttr (toName n, pAttrVal (T.unpack url))
+               asAttr $ MkAttr (toName n, pAttrVal (TL.fromStrict url))
 
-instance (IsName n) => EmbedAsAttr MediaM (Attr n ClckURL) where
+instance (IsName n TL.Text) => EmbedAsAttr MediaM (Attr n ClckURL) where
         asAttr (n := url) =
             do showFn <- mediaClckURL <$> ask
-               asAttr $ MkAttr (toName n, pAttrVal (T.unpack $ showFn url []))
+               asAttr $ MkAttr (toName n, pAttrVal (TL.fromStrict $ showFn url []))
 
 runMediaT :: MediaConfig -> MediaT m a -> ClckT MediaURL m a
 runMediaT mc m = mapClckT f m

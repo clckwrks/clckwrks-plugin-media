@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Clckwrks.Media.Page.AllMedia where
 
 import Control.Applicative     ((<$>))
@@ -10,8 +11,10 @@ import Clckwrks.Media.Types    (MediumId(..))
 import Clckwrks.Media.Monad    (MediaM)
 import Clckwrks.Media.URL      (MediaURL(..))
 import Data.String             (fromString)
+import Data.Text.Lazy          (Text)
 import Happstack.Server        (Response, asContentType, notFound, serveFile, toResponse)
-import HSP 
+import HSP.XML                 (XML, fromStringLit)
+import HSP.XMLGenerator
 
 allMedia :: MediaM Response
 allMedia =
