@@ -9,7 +9,7 @@ import Clckwrks.IOThread (ioRequest)
 import Clckwrks.Media.Acid (GetMediumById(..))
 import Clckwrks.Media.Types (Medium(..), MediumId(..), MediumKind(..), PreviewSize(..))
 
-import Graphics.GD (imageSize, loadJpegFile, resizeImage, saveJpegFile, withImage)
+import Graphics.GD (imageSize, loadJpegFile, loadPngFile, resizeImage, saveJpegFile, savePngFile, withImage)
 import qualified Graphics.GD as GD
 import System.Directory (doesFileExist)
 import System.FilePath ((</>), splitExtension)
@@ -31,8 +31,26 @@ jpgThumbnail size inPath outPath =
                     Venti  -> 400
       maxHeight = maxWidth
 
+pngThumbnail :: PreviewSize -> FilePath -> FilePath -> IO ()
+pngThumbnail size inPath outPath =
+    withImage (loadPngFile inPath) $ \image ->
+        do (w,h) <- imageSize image
+           let (w', h') =
+                 if w > h
+                 then (maxWidth, (h * maxWidth) `div` w)
+                 else ((w * maxHeight) `div` h, maxHeight)
+           image' <- resizeImage w' h' image
+           savePngFile outPath image'
+    where
+      maxWidth  = case size of
+                    Tall   -> 200
+                    Grande -> 300
+                    Venti  -> 400
+      maxHeight = maxWidth
+
 mkThumbnail :: MediumKind -> PreviewSize -> FilePath -> FilePath -> IO ()
 mkThumbnail JPEG = jpgThumbnail
+mkThumbnail PNG  = pngThumbnail
 
 applyTransforms :: FilePath -> FilePath -> (Medium, PreviewSize) -> IO FilePath
 applyTransforms storageDir cacheDir (medium, size) =

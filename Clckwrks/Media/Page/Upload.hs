@@ -30,6 +30,7 @@ extensionMap :: Map String (String, MediumKind)
 extensionMap =
     Map.fromList
            [ ("image/jpeg", ("jpg", JPEG))
+           , ("image/png",  ("png", PNG))
            ]
 
 acceptedTypes :: [String]
