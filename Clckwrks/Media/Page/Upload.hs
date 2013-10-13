@@ -11,6 +11,7 @@ import Clckwrks.Media.Acid  (GenMediumId(..), PutMedium(..))
 import Clckwrks.Media.Monad (MediaConfig(..), MediaM, MediaForm)
 import Clckwrks.Media.Types (Medium(..), MediumId(..), MediumKind(..))
 import Clckwrks.Media.URL   (MediaURL(..))
+import Data.List            (intercalate)
 import           Data.Map   (Map)
 import qualified Data.Map   as Map
 import Data.Text            (pack)
@@ -31,6 +32,7 @@ extensionMap =
     Map.fromList
            [ ("image/jpeg", ("jpg", JPEG))
            , ("image/png",  ("png", PNG))
+           , ("image/gif",  ("gif", GIF))
            ]
 
 acceptedTypes :: [String]
@@ -58,7 +60,7 @@ uploadMedium here =
                        template "Unsupported Type" () $
                            <%>
                             <h1>Unsupported Type</h1>
-                            <p>The file you uploaded appears to have the content type <b><% contentType %></b>. However, at this time the only supported types are <b><% acceptedTypes %></b>.</p>
+                            <p>The file you uploaded appears to have the content type <b><% contentType %></b>. However, at this time the only supported types are <b><% intercalate ", " acceptedTypes %></b>.</p>
                            </%>
                 (Just (ext, kind)) ->
                     do -- renameFile would be faster, but may not work if it has to cross physical devices

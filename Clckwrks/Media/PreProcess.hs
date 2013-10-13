@@ -6,7 +6,7 @@ import Clckwrks (ClckT, ClckState)
 import Clckwrks.Media.URL
 import Clckwrks.Media.Types (MediumId(..))
 import Clckwrks.Monad                   (transform, segments)
-import Data.Attoparsec.Text.Lazy        (Parser, Result(..), char, choice, decimal, parse, skipMany, space, stringCI, skipMany)
+import Data.Attoparsec.Text.Lazy        (Parser, Result(..), char, choice, decimal, parse, skipMany, space, asciiCI, skipMany)
 import           Data.Text (Text)
 import qualified Data.Text.Lazy         as TL
 import           Data.Text.Lazy.Builder (Builder)
@@ -20,7 +20,7 @@ import Web.Routes (showURL)
 parseAttr :: Text -> Parser ()
 parseAttr name =
     do skipMany space
-       stringCI name
+       asciiCI name
        skipMany space
        char '='
        skipMany space

@@ -13,12 +13,14 @@ newtype MediumId = MediumId { unMediumId :: Integer }
 data MediumKind
     = JPEG
     | PNG
+    | GIF
       deriving (Eq, Ord, Read, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''MediumKind)
 
 mediumContentType :: MediumKind -> String
 mediumContentType JPEG = "image/jpeg; charset=binary"
 mediumContentType PNG  = "image/png; charset=binary"
+mediumContentType GIF  = "image/gif; charset=binary"
 
 data Medium
     = Medium { mediumId     :: MediumId
