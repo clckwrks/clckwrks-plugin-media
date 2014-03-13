@@ -3,12 +3,18 @@ module Clckwrks.Media.Types where
 
 import Data.Data (Data, Typeable)
 import Data.IxSet (Indexable(..), ixSet, ixFun)
-import Data.SafeCopy (SafeCopy, base, deriveSafeCopy)
+import Data.SafeCopy (SafeCopy(..), base, contain, deriveSafeCopy)
+import qualified Data.Serialize as S
 import Data.Text     (Text)
 import Web.Routes    (PathInfo(..))
 
 newtype MediumId = MediumId { unMediumId :: Integer }
-    deriving (Eq, Ord, Read, Show, Data, Typeable, SafeCopy, PathInfo)
+    deriving (Eq, Ord, Read, Show, Data, Typeable, PathInfo)
+
+instance SafeCopy MediumId where
+    getCopy = contain $ fmap MediumId S.get
+    putCopy = contain . S.put . unMediumId
+    errorTypeName _ = "MediumId"
 
 data MediumKind
     = JPEG
