@@ -4,6 +4,7 @@ module Clckwrks.Media.Acid where
 import Control.Monad.Reader   (ask)
 import Control.Monad.State    (get, put)
 import Data.Acid              (Query, Update, makeAcidic)
+import Data.Data              (Data, Typeable)
 import Data.IxSet             (IxSet, (@=), getOne, empty, toList, updateIx)
 import Data.SafeCopy          (base, deriveSafeCopy)
 import Clckwrks.Media.Types   (Medium(..), MediumId(..))
@@ -11,7 +12,7 @@ import Clckwrks.Media.Types   (Medium(..), MediumId(..))
 data MediaState = MediaState 
     { nextMediumId :: MediumId
     , media        :: IxSet Medium
-    }
+    } deriving (Data, Typeable)
 $(deriveSafeCopy 0 'base ''MediaState)
 
 initialMediaState :: MediaState
