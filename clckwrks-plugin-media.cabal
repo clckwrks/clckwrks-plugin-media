@@ -1,5 +1,5 @@
 Name:                clckwrks-plugin-media
-Version:             0.6.12
+Version:             0.6.13
 Synopsis:            media plugin for clckwrks
 Homepage:            http://clckwrks.com/
 License:             BSD3
@@ -41,7 +41,7 @@ Library
   Build-depends:
     base                    < 5,
     acid-state             >= 0.12 && < 0.13,
-    attoparsec             >= 0.10 && < 0.13,
+    attoparsec             >= 0.10 && < 0.14,
     blaze-html             >= 0.5 && < 0.9,
     cereal                 >= 0.4 && < 0.5,
     clckwrks               >= 0.21 && < 0.24,
