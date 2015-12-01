@@ -23,6 +23,8 @@ addons:
     - cabal-install-1.22
     - libmagic-dev
     - libgd2-noxpm-dev
+    - happy
+    - alex
 
 before_install:
  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.cabal/bin:$PATH
