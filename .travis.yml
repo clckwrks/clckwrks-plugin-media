@@ -32,7 +32,7 @@ before_install:
 
 install:
  - travis_retry cabal update
- - cabal install --only-dependencies --enable-tests --constraint "text -integer-simple"
+ - cabal install --only-dependencies --constraint "text -integer-simple" # --enable-tests
 
 script:
  - cabal configure --enable-tests
