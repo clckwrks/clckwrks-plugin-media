@@ -10,6 +10,7 @@ Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
 Build-type:          Custom
 Cabal-version:       >=1.6
+Tested-With:         GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.2
 Data-Files:
     data/style.css
 
