@@ -21,8 +21,12 @@ addons:
     - ghc-7.10.2
     - cabal-install-1.18
     - cabal-install-1.22
+    - libmagic-dev
+    - libgd-dev
+
 before_install:
  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.cabal/bin:$PATH
+ - ghc --version
  - cabal --version
 # - cabal install happy alex
 
