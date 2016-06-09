@@ -2,8 +2,3 @@ clckwrks-plugin-media [![Hackage](https://img.shields.io/hackage/v/clckwrks-plug
 =========
 
 A clckwrks plugin which provides support for upload media files. Currently just images.
-
-
-
-
-
