@@ -42,8 +42,8 @@ mediaHandler showMediaURL mediaConfig plugins paths =
 mediaInit :: ClckPlugins
            -> IO (Maybe Text)
 mediaInit plugins =
-    do (Just mediaShowFn) <- getPluginRouteFn plugins (pluginName mediaPlugin)
-       (Just clckShowFn) <- getPluginRouteFn plugins (pluginName clckPlugin)
+    do ~(Just mediaShowFn) <- getPluginRouteFn plugins (pluginName mediaPlugin)
+       ~(Just clckShowFn) <- getPluginRouteFn plugins (pluginName clckPlugin)
        mTopDir <- clckTopDir <$> getConfig plugins
        let basePath = maybe "_state" (\td -> td </> "_state") mTopDir -- FIXME
            mediaDir = maybe "_media" (\td -> td </> "_media") mTopDir
@@ -74,7 +74,7 @@ mediaInit plugins =
 addMediaAdminMenu :: ClckT url IO ()
 addMediaAdminMenu =
     do p <- plugins <$> get
-       (Just mediaShowURL) <- getPluginRouteFn p (pluginName mediaPlugin)
+       ~(Just mediaShowURL) <- getPluginRouteFn p (pluginName mediaPlugin)
        let uploadURL   = mediaShowURL (MediaAdmin Upload) []
            allMediaURL = mediaShowURL (MediaAdmin AllMedia) []
        addAdminMenu ("Media Gallery", [(Set.fromList [Administrator], "Upload",    uploadURL)
