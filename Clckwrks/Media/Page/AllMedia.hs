@@ -19,7 +19,7 @@ import Language.Haskell.HSX.QQ (hsx)
 allMedia :: MediaM Response
 allMedia =
     do mediumIds <- query AllMediumIds
-       template "all  media" <link rel="stylesheet" type="text/css" href=(PluginData (fromString "media") "style.css") /> $
+       template "all  media" [hsx| <link rel="stylesheet" type="text/css" href=(PluginData (fromString "media") "style.css") /> |] $
                 mkGallery mediumIds
 
 mkGallery :: [MediumId] -> XMLGenT MediaM XML
