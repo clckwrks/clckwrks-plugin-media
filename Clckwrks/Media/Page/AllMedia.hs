@@ -1,5 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
+{-# LANGUAGE QuasiQuotes, OverloadedStrings #-}
 module Clckwrks.Media.Page.AllMedia where
 
 import Control.Applicative     ((<$>))
@@ -15,21 +14,22 @@ import Data.Text.Lazy          (Text)
 import Happstack.Server        (Response, asContentType, notFound, serveFile, toResponse)
 import HSP.XML                 (XML, fromStringLit)
 import HSP.XMLGenerator
+import Language.Haskell.HSX.QQ (hsx)
 
 allMedia :: MediaM Response
 allMedia =
     do mediumIds <- query AllMediumIds
-       template "all  media" <link rel="stylesheet" type="text/css" href=(PluginData (fromString "media") "style.css") /> $ 
+       template "all  media" <link rel="stylesheet" type="text/css" href=(PluginData (fromString "media") "style.css") /> $
                 mkGallery mediumIds
 
 mkGallery :: [MediumId] -> XMLGenT MediaM XML
-mkGallery mediumIds =
+mkGallery mediumIds = [hsx|
     <ul id="media-gallery">
       <% mapM mkPreview mediumIds %>
-    </ul>
+    </ul> |]
 
 mkPreview :: MediumId -> XMLGenT MediaM XML
-mkPreview mid =
+mkPreview mid = [hsx|
        <li>
         <a href=(GetMedium mid)><img src=(Preview mid) /></a>
-       </li>
+       </li> |]

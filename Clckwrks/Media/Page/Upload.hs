@@ -1,5 +1,4 @@
-{-# LANGUAGE TypeFamilies, OverloadedStrings #-}
-{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
+{-# LANGUAGE TypeFamilies, OverloadedStrings, QuasiQuotes #-}
 module Clckwrks.Media.Page.Upload where
 
 import Control.Applicative  ((<$>), (<*))
@@ -19,6 +18,7 @@ import Data.Text.Lazy       (Text)
 import Happstack.Server     (ContentType, Input, Response, ServerPartT, ok, setResponseCode, toResponse)
 import HSP.XML              (fromStringLit)
 import HSP.XMLGenerator
+import Language.Haskell.HSX.QQ (hsx)
 import Magic                (magicFile)
 import Text.Reform          ((++>), FormError(..))
 import Text.Reform.Happstack (reform)
@@ -43,11 +43,11 @@ contentTypeExtension ct = Map.lookup (takeWhile (/= ';') ct) extensionMap
 
 uploadMedium :: MediaURL -> MediaM Response
 uploadMedium here =
-    do template "Upload Medium" () $
+    do template "Upload Medium" () $ [hsx|
         <%>
          <% reform (form here) "ep" saveMedium Nothing uploadForm %>
         </%>
-
+        |]
     where
       saveMedium :: (String, FilePath, ContentType) -> MediaM Response
       saveMedium (tempPath, origName, contentType) =
@@ -57,11 +57,11 @@ uploadMedium here =
              case contentTypeExtension contentType of
                 Nothing ->
                     do setResponseCode 415
-                       template "Unsupported Type" () $
+                       template "Unsupported Type" () $ [hsx|
                            <%>
                             <h1>Unsupported Type</h1>
                             <p>The file you uploaded appears to have the content type <b><% contentType %></b>. However, at this time the only supported types are <b><% intercalate ", " acceptedTypes %></b>.</p>
-                           </%>
+                           </%> |]
                 (Just (ext, kind)) ->
                     do -- renameFile would be faster, but may not work if it has to cross physical devices
                        -- in theory, the filename could be the md5sum of the file making it easy to check for corruption
