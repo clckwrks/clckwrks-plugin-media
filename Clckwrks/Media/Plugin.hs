@@ -83,11 +83,11 @@ addMediaAdminMenu =
 
 mediaPlugin :: Plugin MediaURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig ClckPluginsSt
 mediaPlugin = Plugin
-    { pluginName       = "media"
-    , pluginInit       = mediaInit
-    , pluginDepends    = []
-    , pluginToPathInfo = toPathInfo
-    , pluginPostHook   = addMediaAdminMenu
+    { pluginName           = "media"
+    , pluginInit           = mediaInit
+    , pluginDepends        = []
+    , pluginToPathSegments = toPathSegments
+    , pluginPostHook       = addMediaAdminMenu
     }
 
 plugin :: ClckPlugins -- ^ plugins
